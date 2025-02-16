@@ -62,12 +62,12 @@
   </style>
 </head>
 <body>
-  <h1>Match the Countries to Their Continents</h1>
+  <h1>Match the verb to the binyan</h1>
   <div class="container" id="continents-container">
     <!-- Continent boxes will be dynamically generated here -->
   </div>
 
-  <h2>Countries</h2>
+  <h2>Verbs</h2>
   <div class="container" id="countries-container">
     <!-- Country items will be dynamically generated here -->
   </div>
@@ -98,26 +98,20 @@
       { name: 'וַתִּכְרַ֣ע', continent: 'Paal', capital: 'she bowed down' },
       { name: 'וַתְּדַבֵּ֙רְנָה֙', continent: 'Piel', capital: 'they (f) informed her' },
       { name: 'הַנִּצָּב֣וֹת', continent: 'Niphal', capital: 'the ones set(standing) beside her' },
-      { name: 'שָׁ֥תָה', continent: 'Paal', capital: 'she set' },/*
-      { name: '', continent: 'europe', capital: 'Paris' },
-
-      { name: 'וַיַּעַרְכ֨וּ', continent: 'europe', capital: 'Paris' },
-      { name: 'וַתִּטֹּשׁ֙', continent: 'europe', capital: 'Paris' },
-      { name: 'וַיִּנָּ֥גֶף', continent: 'europe', capital: 'Paris' },
-      { name: 'וַיַּכּ֤וּ', continent: 'europe', capital: 'Paris' },
-      { name: 'הַכְּרֻבִ֑ים', continent: 'europe', capital: 'Paris' },
-      { name: 'וַיִּנָּ֤גֶף', continent: 'asia', capital: 'Beijing' },
-      { name: 'קְרֻעִ֔ים', continent: 'asia', capital: 'New Delhi' },
-      { name: 'וַיִּלָּחֲמ֣וּ', continent: 'africa', capital: 'Cairo' },
-      { name: 'נִלְקָ֑ח', continent: 'africa', capital: 'Nairobi' },
-      { name: 'וַיָּרִ֥עוּ', continent: 'europe', capital: 'Paris' },
-      { name: 'הַתְּרוּעָ֔ה', continent: 'europe', capital: 'Berlin' },
-      { name: 'וַתֵּהֹ֖ם', continent: 'north-america', capital: 'Ottawa' },
-      { name: 'הַמַּכִּ֧ים', continent: 'north-america', capital: 'Washington, D.C.' },
-      { name: 'יַצִּילֵ֔נוּ', continent: 'south-america', capital: 'Brasília' },
-      { name: 'הִֽתְחַזְּק֞וּ', continent: 'south-america', capital: 'Buenos Aires' },
-      { name: 'וְנִלְחַמְתֶּֽם', continent: 'australia', capital: 'Canberra' },
-      { name: 'מַכָּ֖ה', continent: 'antarctica', capital: 'N/A' }*/
+      { name: 'שָׁ֥תָה', continent: 'Paal', capital: 'she set' },
+      { name: 'וַיַּעַרְכ֨וּ', continent: 'Paal', capital: 'and they lined up for battle' },
+      { name: 'וַתִּטֹּשׁ֙', continent: 'Paal', capital: 'and she drew out (natash)' },
+      { name: 'וַיִּנָּ֥גֶף', continent: 'Niphal', capital: 'and he was defeated' },
+      { name: 'וַיַּכּ֤וּ', continent: 'Hiphil', capital: 'and he struck down (nch)' },
+      { name: 'קְרֻעִ֔ים', continent: 'Paal', capital: 'Pual they were torn' },
+      { name: 'וַיִּלָּחֲמ֣וּ', continent: 'Niphal', capital: 'and they fought' },
+      { name: 'נִלְקָ֑ח', continent: 'Niphal', capital: 'it was taken' },
+      { name: 'וַיָּרִ֥עוּ', continent: 'Hiphil', capital: 'and they shouted with joy' },
+      { name: 'וַתֵּהֹ֖ם', continent: 'Niphal', capital: 'and she was in an uproar' },
+      { name: 'הַמַּכִּ֧ים', continent: 'Hiphil', capital: 'them striking' },
+      { name: 'יַצִּילֵ֔נוּ', continent: 'Hiphil', capital: 'who will deliver us' },
+      { name: 'הִֽתְחַזְּק֞וּ', continent: 'Hithpael', capital: 'you pl take courage' },
+      { name: 'וְנִלְחַמְתֶּֽם', continent: 'Niphal', capital: 'and you will fight' },
     ];
 
     // Get container elements
@@ -183,16 +177,16 @@
           countryWithCapital.textContent = `${this.textContent}`;
           const capitalText = document.createElement('div');
           capitalText.className = 'capital';
-          capitalText.textContent = `Capital: ${this.getAttribute('data-capital')}`;
+          capitalText.textContent = `C: ${this.getAttribute('data-capital')}`;
           countryWithCapital.appendChild(capitalText);
           continentBox.appendChild(countryWithCapital);
           this.classList.add('assigned');
           errorMessage.textContent = ''; // Clear error message on correct assignment
         } else {
-          errorMessage.textContent = `Error: ${this.textContent} does not belong to this continent.`;
+          errorMessage.textContent = `Error: ${this.textContent} does not belong to this binyan.`;
         }
       } else {
-        errorMessage.textContent = 'Please select a continent first.';
+        errorMessage.textContent = 'Please select a binyan first.';
       }
     }
 

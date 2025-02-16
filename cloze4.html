@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Sam 4 Exercise with Click Interaction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+		font-size:2em;
+            margin: 20px;
+        }
+        .cloze-exercise {
+            margin-bottom: 20px;
+        }
+        .cloze-exercise p {
+            margin-bottom: 10px;
+        }
+        .drop-zone {
+            display: inline-block;
+            width: 100px;
+            height: 30px;
+            border: 2px dashed #ccc;
+            text-align: center;
+            line-height: 30px;
+            margin: 0 5px;
+        }
+        .drop-zone.active {
+            border-color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .drag-item {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .correct {
+            background-color: #d4edda;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+        }
+        .navigation {
+            margin-top: 20px;
+        }
+        .navigation button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cloze-exercise">
+        <p>Complete the paragraphs by clicking on the blanks and then selecting the correct words:</p>
+        <div id="paragraphsContainer"></div>
+        <div class="drag-items" id="dragItemsContainer"></div>
+        <div class="navigation">
+            <button id="prevButton" onclick="showPreviousParagraph()">Previous</button>
+            <button id="nextButton" onclick="showNextParagraph()">Next</button>
+            <button onclick="checkAnswers()">Check Answers</button>
+    <button id="playSound" onclick="playsound()">Play Sound</button>
+  	<button id="stopSound" onclick="stopsound()">Stop Sound</button>
+        
+        </div>
+    </div>
+
+    <script>
+let beat = new Audio('s04.mp3');        //connect sound file
+let st=[1,53,94,131,165,200,252];//timing of sound
+       
+ // Array of paragraphs with blanks
+        const paragraphs = [
+                                   {
+                id: 'paragraph1',
+                text: 'וַיְהִ֥י דְבַר־שְׁמוּאֵ֖ל לְכָל־יִשְׂרָאֵ֑ל וַיֵּצֵ֣א יִשְׂרָאֵל֩ לִקְרַ֨את פְּלִשְׁתִּ֜ים לַמִּלְחָמָ֗ה {} עַל־הָאֶ֣בֶן הָעֵ֔זֶר וּפְלִשְׁתִּ֖ים חָנ֥וּ בַאֲפֵֽק׃ 2       {} פְלִשְׁתִּ֜ים לִקְרַ֣את יִשְׂרָאֵ֗ל {} הַמִּלְחָמָ֔ה {} יִשְׂרָאֵ֖ל לִפְנֵ֣י פְלִשְׁתִּ֑ים {} בַמַּֽעֲרָכָה֙ בַּשָּׂדֶ֔ה כְּאַרְבַּ֥עַת אֲלָפִ֖ים אִֽישׁ׃ 3       וַיָּבֹ֣א הָעָם֮ אֶל־הַֽמַּחֲנֶה֒ וַיֹּֽאמְרוּ֙ זִקְנֵ֣י יִשְׂרָאֵ֔ל לָ֣מָּה נְגָפָ֧נוּ יְהוָ֛ה הַיּ֖וֹם לִפְנֵ֣י פְלִשְׁתִּ֑ים נִקְחָ֧ה אֵלֵ֣ינוּ מִשִּׁלֹ֗ה אֶת־אֲרוֹן֙ בְּרִ֣ית יְהוָ֔ה וְיָבֹ֣א בְקִרְבֵּ֔נוּ וְיֹשִׁעֵ֖נוּ מִכַּ֥ף אֹיְבֵֽינוּ׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem1' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem2' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem3' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem4' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem5' }  // 
+                ]
+            },
+  {
+                id: 'paragraph2',
+                text: '4       וַיִּשְׁלַ֤ח הָעָם֙ שִׁלֹ֔ה וַיִּשְׂא֣וּ מִשָּׁ֗ם אֵ֣ת אֲר֧וֹן בְּרִית־יְהוָ֛ה צְבָא֖וֹת יֹשֵׁ֣ב {} וְשָׁ֞ם שְׁנֵ֣י בְנֵֽי־עֵלִ֗י עִם־אֲרוֹן֙ בְּרִ֣ית הָאֱלֹהִ֔ים חָפְנִ֖י וּפִֽינְחָֽס׃ 5       וַיְהִ֗י כְּב֨וֹא אֲר֤וֹן בְּרִית־יְהוָה֙ אֶל־הַֽמַּחֲנֶ֔ה {} כָל־יִשְׂרָאֵ֖ל תְּרוּעָ֣ה גְדוֹלָ֑ה {} הָאָֽרֶץ׃ 6       וַיִּשְׁמְע֤וּ פְלִשְׁתִּים֙ אֶת־ק֣וֹל {} וַיֹּ֣אמְר֔וּ מֶ֠ה ק֣וֹל הַתְּרוּעָ֧ה הַגְּדוֹלָ֛ה הַזֹּ֖את {} הָעִבְרִ֑ים וַיֵּ֣דְע֔וּ כִּ֚י אֲר֣וֹן יְהוָ֔ה בָּ֖א אֶל־הַֽמַּחֲנֶֽה׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem6' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem8' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem10' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem9' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem7' }  // 
+                ]
+            },
+  {
+                id: 'paragraph3',
+                text: '7       וַיִּֽרְאוּ֙ הַפְּלִשְׁתִּ֔ים כִּ֣י אָמְר֔וּ בָּ֥א אֱלֹהִ֖ים אֶל־הַֽמַּחֲנֶ֑ה וַיֹּאמְרוּ֙ א֣וֹי לָ֔נוּ כִּ֣י לֹ֥א הָיְתָ֛ה כָּזֹ֖את אֶתְמ֥וֹל שִׁלְשֹֽׁם׃8       א֣וֹי לָ֔נוּ מִ֣י {} מִיַּ֛ד הָאֱלֹהִ֥ים הָאַדִּירִ֖ים הָאֵ֑לֶּה אֵ֧לֶּה הֵ֣ם הָאֱלֹהִ֗ים {} אֶת־מִצְרַ֛יִם בְּכָל־{} בַּמִּדְבָּֽר׃9       {} וִֽהְי֤וּ לַֽאֲנָשִׁים֙ פְּלִשְׁתִּ֔ים פֶּ֚ן תַּעַבְד֣וּ לָעִבְרִ֔ים כַּאֲשֶׁ֥ר עָבְד֖וּ לָכֶ֑ם וִהְיִיתֶ֥ם לַאֲנָשִׁ֖ים {}׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem12' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem11' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem15' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem13' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem14' }  // 
+                ]
+            },
+  {
+                id: 'paragraph4',
+                text: '10      . {} פְלִשְׁתִּ֗ים {} יִשְׂרָאֵל֙ וַיָּנֻ֙סוּ֙ אִ֣ישׁ לְאֹהָלָ֔יו וַתְּהִ֥י הַמַּכָּ֖ה גְּדוֹלָ֣ה מְאֹ֑ד וַיִּפֹּל֙ מִיִּשְׂרָאֵ֔ל שְׁלֹשִׁ֥ים אֶ֖לֶף {}׃11       וַאֲר֥וֹן אֱלֹהִ֖ים {} וּשְׁנֵ֤י בְנֵֽי־עֵלִי֙ מֵ֔תוּ חָפְנִ֖י וּפִֽינְחָֽס׃12       וַיָּ֤רָץ אִישׁ־בִּנְיָמִן֙ מֵהַמַּ֣עֲרָכָ֔ה וַיָּבֹ֥א שִׁלֹ֖ה בַּיּ֣וֹם הַה֑וּא וּמַדָּ֣יו {} וַאֲדָמָ֖ה עַל־רֹאשֽׁוֹ׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem17' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem19' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem20' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem16' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem18' }  // 
+                ]
+            },
+  {
+                id: 'paragraph5',
+                text: '13       וַיָּב֗וֹא וְהִנֵּ֣ה עֵ֠לִי יֹשֵׁ֨ב עַֽל־הַכִּסֵּ֜א יַךְ דֶּ֙רֶךְ֙ {} כִּֽי־הָיָ֤ה לִבּוֹ֙ {} עַ֖ל אֲר֣וֹן הָאֱלֹהִ֑ים וְהָאִ֗ישׁ בָּ֚א לְהַגִּ֣יד בָּעִ֔יר {} כָּל־הָעִֽיר׃14       וַיִּשְׁמַ֤ע עֵלִי֙ אֶת־ק֣וֹל הַצְּעָקָ֔ה וַיֹּ֕אמֶר מֶ֛ה ק֥וֹל הֶהָמ֖וֹן הַזֶּ֑ה וְהָאִ֣ישׁ {} וַיָּבֹ֖א וַיַּגֵּ֥ד לְעֵלִֽי׃15       וְעֵלִ֕י בֶּן־תִּשְׁעִ֥ים וּשְׁמֹנֶ֖ה שָׁנָ֑ה וְעֵינָ֣יו {} וְלֹ֥א יָכ֖וֹל לִרְאֽוֹת׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem22' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem24' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem21' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem25' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem23' }  // 
+                ]
+            },
+  {
+                id: 'paragraph6',
+                text: '16       וַיֹּ֨אמֶר הָאִ֜ישׁ אֶל־עֵלִ֗י אָֽנֹכִי֙ הַבָּ֣א מִן־{} וַאֲנִ֕י מִן־הַמַּעֲרָכָ֖ה נַ֣סְתִּי הַיּ֑וֹם וַיֹּ֛אמֶר מֶֽה־הָיָ֥ה הַדָּבָ֖ר בְּנִֽי׃17       וַיַּ֨עַן {} וַיֹּ֗אמֶר {} יִשְׂרָאֵל֙ לִפְנֵ֣י פְלִשְׁתִּ֔ים וְגַ֛ם מַגֵּפָ֥ה גְדוֹלָ֖ה הָיְתָ֣ה בָעָ֑ם וְגַם־שְׁנֵ֨י בָנֶ֜יךָ מֵ֗תוּ חָפְנִי֙ וּפִ֣ינְחָ֔ס וַאֲר֥וֹן הָאֱלֹהִ֖ים נִלְקָֽחָה׃ פ18       וַיְהִ֞י {}׀ אֶת־אֲר֣וֹן הָאֱלֹהִ֗ים וַיִּפֹּ֣ל מֵֽעַל־הַ֠כִּסֵּא אֲחֹ֨רַנִּ֜ית בְּעַ֣ד׀ יַ֣ד הַשַּׁ֗עַר {} מַפְרַקְתּוֹ֙ וַיָּמֹ֔ת כִּֽי־זָקֵ֥ן הָאִ֖ישׁ וְכָבֵ֑ד וְה֛וּא שָׁפַ֥ט אֶת־יִשְׂרָאֵ֖ל אַרְבָּעִ֥ים שָׁנָֽה׃',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem26' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem28' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem30' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem27' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem29' }  // 
+                ]
+            },
+  {
+                id: 'paragraph7',
+                text: '19       וְכַלָּת֣וֹ אֵֽשֶׁת־פִּינְחָס֮ {} לָלַת֒ וַתִּשְׁמַ֣ע אֶת־הַשְּׁמֻעָ֔ה אֶל־{} אֲר֣וֹן הָאֱלֹהִ֔ים וּמֵ֥ת חָמִ֖יהָ וְאִישָׁ֑הּ {} וַתֵּ֔לֶד כִּֽי־נֶהֶפְכ֥וּ עָלֶ֖יהָ צִרֶֽיהָ׃20       וּכְעֵ֣ת מוּתָ֗הּ {} {} עָלֶ֔יהָ אַל־תִּֽירְאִ֖י כִּ֣י בֵ֣ן יָלָ֑דְתְּ וְלֹ֥א עָנְתָ֖ה וְלֹא־שָׁ֥תָה לִבָּֽהּ׃21       וַתִּקְרָ֣א לַנַּ֗עַר אִֽי־כָבוֹד֙ לֵאמֹ֔ר גָּלָ֥ה כָב֖וֹד מִיִּשְׂרָאֵ֑ל אֶל־הִלָּקַח֙ אֲר֣וֹן הָאֱלֹהִ֔ים וְאֶל־חָמִ֖יהָ וְאִישָֽׁהּ׃22       וַתֹּ֕אמֶר גָּלָ֥ה כָב֖וֹד מִיִּשְׂרָאֵ֑ל כִּ֥י נִלְקַ֖ח אֲר֥וֹן הָאֱלֹהִֽים׃ פ',
+                blanks: [
+                    { id: 'dropZone1', correctAnswer: 'dragItem31' }, // 
+                    { id: 'dropZone2', correctAnswer: 'dragItem33' }, // 
+                    { id: 'dropZone3', correctAnswer: 'dragItem32' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem34' }, // 
+                    { id: 'dropZone4', correctAnswer: 'dragItem35' }, // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem36' } 
+            
+                        ]
+                           
+            }
+        ];
+
+
+        // Array of draggable items
+        const dragItems = [
+	    { id: 'dragItem1', text: 'וַֽיַּחֲנוּ֙' },
+            { id: 'dragItem2', text: 'וַיַּעַרְכ֨וּ' },
+            { id: 'dragItem3', text: 'וַתִּטֹּשׁ֙' },
+            { id: 'dragItem4', text: 'וַיִּנָּ֥גֶף' },
+            { id: 'dragItem5', text: 'וַיַּכּ֤וּ' },
+            { id: 'dragItem6', text: 'הַכְּרֻבִ֑ים' },
+            { id: 'dragItem7', text: 'בְּמַחֲנֵ֣ה' },
+            { id: 'dragItem8', text: 'וַיָּרִ֥עוּ' },
+            { id: 'dragItem9', text: 'הַתְּרוּעָ֔ה' },
+            { id: 'dragItem10', text: 'וַתֵּהֹ֖ם' },
+            { id: 'dragItem11', text: 'הַמַּכִּ֧ים' },
+            { id: 'dragItem12', text: 'יַצִּילֵ֔נוּ' },
+            { id: 'dragItem13', text: 'הִֽתְחַזְּק֞וּ' },
+            { id: 'dragItem14', text: 'וְנִלְחַמְתֶּֽם' },
+            { id: 'dragItem15', text: 'מַכָּ֖ה' },
+            { id: 'dragItem16', text: 'נִלְקָ֑ח' },
+            { id: 'dragItem17', text: 'וַיִּלָּחֲמ֣וּ' },
+            { id: 'dragItem18', text: 'קְרֻעִ֔ים' },
+            { id: 'dragItem19', text: 'וַיִּנָּ֤גֶף' },
+            { id: 'dragItem20', text: 'רַגְלִֽי' },
+            { id: 'dragItem21', text: 'וַתִּזְעַ֖ק' },
+            { id: 'dragItem22', text: 'מְצַפֶּ֔ה' },
+            { id: 'dragItem23', text: 'קָ֔מָה' },
+            { id: 'dragItem24', text: 'חָרֵ֔ד' },
+            { id: 'dragItem25', text: 'מִהַ֔ר' },
+            { id: 'dragItem26', text: 'הַמַּעֲרָכָ֔ה' },
+            { id: 'dragItem27', text: 'כְּהַזְכִּירֹ֣ו' },
+            { id: 'dragItem28', text: 'הַֽמְבַשֵּׂ֜ר' },
+            { id: 'dragItem29', text: 'וַתִּשָּׁבֵ֤ר' },
+            { id: 'dragItem30', text: 'נָ֤ס' },
+            { id: 'dragItem31', text: 'הָרָ֣ה' },
+            { id: 'dragItem32', text: 'וַתִּכְרַ֣ע' },
+            { id: 'dragItem33', text: 'הִלָּקַח֙' },
+            { id: 'dragItem34', text: 'וַתְּדַבֵּ֙רְנָה֙' },
+            { id: 'dragItem35', text: 'הַנִּצָּב֣וֹת' },
+            { id: 'dragItem36', text: 'שָׁ֥תָה' },
+            { id: 'dragItem37', text: 'wine' },
+            { id: 'dragItem38', text: 'wine' },
+            { id: 'dragItem39', text: 'wine' },
+            { id: 'dragItem40', text: 'wine' }
+        	
+		];
+
+        let currentParagraphIndex = 0;
+        let activeBlankId = null; // Track the currently selected blank
+
+        // Function to generate paragraphs with blanks
+        function generateParagraphs() {
+            const container = document.getElementById('paragraphsContainer');
+            container.innerHTML = ''; // Clear previous content
+
+            const paragraph = paragraphs[currentParagraphIndex];
+            const p = document.createElement('p');
+            const parts = paragraph.text.split('{}'); // Split the paragraph at the blanks
+
+            // Iterate through the parts and blanks
+            parts.forEach((part, index) => {
+                // Add the text part
+                p.appendChild(document.createTextNode(part));
+
+                // Add the drop zone if it exists
+                if (index < paragraph.blanks.length) {
+                    const dropZone = document.createElement('span');
+                    dropZone.className = 'drop-zone';
+                    dropZone.id = paragraph.blanks[index].id;
+                    p.appendChild(dropZone);
+                }
+            });
+
+            container.appendChild(p);
+        }
+
+        // Function to generate draggable items for the current paragraph
+        function generateDragItems() {
+            const container = document.getElementById('dragItemsContainer');
+            container.innerHTML = ''; // Clear previous content
+
+            const paragraph = paragraphs[currentParagraphIndex];
+            const blankIds = paragraph.blanks.map(blank => blank.correctAnswer);
+
+            dragItems.forEach(item => {
+                if (blankIds.includes(item.id)) {
+                    const dragItem = document.createElement('div');
+                    dragItem.id = item.id;
+                    dragItem.className = 'drag-item';
+                    dragItem.textContent = item.text;
+                    container.appendChild(dragItem);
+                }
+            });
+        }
+
+        // Function to handle clicking on a blank space
+        function handleBlankClick(e) {
+            const blank = e.target;
+            activeBlankId = blank.id; // Set the active blank
+            highlightBlank(blank); // Highlight the selected blank
+        }
+
+        // Function to handle clicking on an answer
+        function handleAnswerClick(e) {
+            const answer = e.target;
+            if (activeBlankId) {
+                const blank = document.getElementById(activeBlankId);
+                blank.textContent = answer.textContent; // Place the answer in the blank
+                blank.setAttribute('data-dragged-id', answer.id); // Store the answer ID
+                resetActiveBlank(); // Reset the active blank
+            }
+        }
+
+        // Function to highlight the selected blank
+        function highlightBlank(blank) {
+            // Remove highlight from all blanks
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('active');
+            });
+            // Highlight the selected blank
+            blank.classList.add('active');
+        }
+
+        // Function to reset the active blank
+        function resetActiveBlank() {
+            activeBlankId = null;
+            // Remove highlight from all blanks
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('active');
+            });
+        }
+
+        // Attach click event listeners to blanks
+        function attachBlankListeners() {
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.removeEventListener('click', handleBlankClick); // Remove old listeners
+                zone.addEventListener('click', handleBlankClick); // Add new listeners
+            });
+        }
+
+        // Attach click event listeners to answers
+        function attachAnswerListeners() {
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.removeEventListener('click', handleAnswerClick); // Remove old listeners
+                item.addEventListener('click', handleAnswerClick); // Add new listeners
+            });
+        }
+
+        // Function to check answers
+        function checkAnswers() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let allCorrect = true;
+
+            dropZones.forEach(zone => {
+                const draggedId = zone.getAttribute('data-dragged-id');
+                const correctAnswer = paragraphs[currentParagraphIndex].blanks
+                    .find(blank => blank.id === zone.id)?.correctAnswer;
+
+                if (draggedId === correctAnswer) {
+                    zone.classList.add('correct');
+                    zone.classList.remove('incorrect');
+                } else {
+                    zone.classList.add('incorrect');
+                    zone.classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                alert('All answers are correct! Well done!');
+		playsound();
+            } else {
+                alert('Some answers are incorrect. Please try again.');
+            }
+        }
+
+        // Function to show the next paragraph
+        function showNextParagraph() {
+            if (currentParagraphIndex < paragraphs.length - 1) {
+                currentParagraphIndex++;
+                generateParagraphs();
+                generateDragItems();
+                attachBlankListeners(); // Reattach event listeners
+                attachAnswerListeners(); // Reattach event listeners
+                updateNavigationButtons();
+            }
+        }
+
+        // Function to show the previous paragraph
+        function showPreviousParagraph() {
+            if (currentParagraphIndex > 0) {
+                currentParagraphIndex--;
+                generateParagraphs();
+                generateDragItems();
+                attachBlankListeners(); // Reattach event listeners
+                attachAnswerListeners(); // Reattach event listeners
+                updateNavigationButtons();
+            }
+        }
+
+function playsound() {tm=Number (st[currentParagraphIndex]);beat.currentTime=tm;beat.play();}
+                   // Play the beat
+                   
+function stopsound() {beat.pause();}
+                   // stop the beat
+        // Function to update navigation buttons
+        function updateNavigationButtons() {
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+
+            prevButton.disabled = currentParagraphIndex === 0;
+            nextButton.disabled = currentParagraphIndex === paragraphs.length - 1;
+        }
+
+        // Initialize the exercise when the page loads
+        generateParagraphs();
+        generateDragItems();
+        attachBlankListeners(); // Attach click listeners to blanks
+        attachAnswerListeners(); // Attach click listeners to answers
+        updateNavigationButtons();
+    </script>
+
+</body>
+</html>

@@ -68,31 +68,39 @@
     </div>
 
     <script>
-let beat = new Audio('s05.mp3');        //connect sound file
+let beat = new Audio('s06.mp3');        //connect sound file
 let st=[1,32,70,117];//timing of sound
        
  // Array of paragraphs with blanks
         const paragraphs = [
                                    {
                 id: 'paragraph1',
-                text: ' 1  וַיְהִ֧י אֲרוֹן־יְהוָ֛ה בִּשְׂדֵ֥ה פְלִשְׁתִּ֖ים שִׁבְעָ֥ה חֳדָשִֽׁים׃ 2       וַיִּקְרְא֣וּ פְלִשְׁתִּ֗ים לַכֹּהֲנִ֤ים וְלַקֹּֽסְמִים֙ לֵאמֹ֔ר מַֽה־נַּעֲשֶׂ֖ה לַאֲר֣וֹן יְהוָ֑ה הוֹדִעֻ֕נוּ בַּמֶּ֖ה נְשַׁלְּחֶ֥נּוּ לִמְקוֹמֽוֹ׃ 3       וַיֹּאמְר֗וּ אִֽם־מְשַׁלְּחִ֞ים אֶת־אֲר֨וֹן אֱלֹהֵ֤י יִשְׂרָאֵל֙ אַל־תְּשַׁלְּח֤וּ אֹתוֹ֙ רֵיקָ֔ם כִּֽי־הָשֵׁ֥ב תָּשִׁ֛יבוּ ל֖וֹ אָשָׁ֑ם אָ֤ז תֵּרָֽפְאוּ֙ וְנוֹדַ֣ע לָכֶ֔ם לָ֛מָּה לֹא־תָס֥וּר יָד֖וֹ מִכֶּֽם׃',
+                text: ' 1  וַיְהִ֧י אֲרוֹן־יְהוָ֛ה בִּשְׂדֵ֥ה פְלִשְׁתִּ֖ים שִׁבְעָ֥ה חֳדָשִֽׁים׃ 2       וַיִּקְרְא֣וּ פְלִשְׁתִּ֗ים לַכֹּהֲנִ֤ים וְלַקֹּֽסְמִים֙ לֵאמֹ֔ר מַֽה־נַּעֲשֶׂ֖ה לַאֲר֣וֹן יְהוָ֑ה {} בַּמֶּ֖ה {} לִמְקוֹמֽוֹ׃ 3       וַיֹּאמְר֗וּ אִֽם־{} אֶת־אֲר֨וֹן אֱלֹהֵ֤י יִשְׂרָאֵל֙ אַל־{} אֹתוֹ֙ רֵיקָ֔ם כִּֽי־{} ל֖וֹ אָשָׁ֑ם אָ֤ז תֵּרָֽפְאוּ֙ {} לָכֶ֔ם לָ֛מָּה לֹא־{} יָד֖וֹ מִכֶּֽם׃',
                 blanks: [
                     { id: 'dropZone1', correctAnswer: 'dragItem1' }, // 
                     { id: 'dropZone2', correctAnswer: 'dragItem2' }, // 
                     { id: 'dropZone3', correctAnswer: 'dragItem3' }, // 
                     { id: 'dropZone4', correctAnswer: 'dragItem4' }, // 
-                    { id: 'dropZone5', correctAnswer: 'dragItem5' }  // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem5' },  // 
+		     { id: 'dropZone5b', correctAnswer: 'dragItem5b' },  // 
+		     { id: 'dropZone5c', correctAnswer: 'dragItem5c' }  // 
+
                 ]
             },
   {
                 id: 'paragraph2',
-	text: '4       וַיֹּאמְר֗וּ מָ֣ה הָאָשָׁם֮ אֲשֶׁ֣ר נָשִׁ֣יב לוֹ֒ וַיֹּאמְר֗וּ מִסְפַּר֙ סַרְנֵ֣י פְלִשְׁתִּ֔ים חֲמִשָּׁה֙ עָפְלֵי זָהָ֔ב וַחֲמִשָּׁ֖ה עַכְבְּרֵ֣י זָהָ֑ב כִּֽי־מַגֵּפָ֥ה אַחַ֛ת לְכֻלָּ֖ם וּלְסַרְנֵיכֶֽם׃ 5       וַעֲשִׂיתֶם֩ צַלְמֵ֨י עָפְלֵיכֶם וְצַלְמֵ֣י עַכְבְּרֵיכֶ֗ם הַמַּשְׁחִיתִם֙ אֶת־הָאָ֔רֶץ וּנְתַתֶּ֛ם לֵאלֹהֵ֥י יִשְׂרָאֵ֖ל כָּב֑וֹד אוּלַ֗י יָקֵ֤ל אֶת־יָדוֹ֙ מֵֽעֲלֵיכֶ֔ם וּמֵעַ֥ל אֱלֹהֵיכֶ֖ם וּמֵעַ֥ל אַרְצְכֶֽם׃ 6       וְלָ֤מָּה תְכַבְּדוּ֙ אֶת־לְבַבְכֶ֔ם כַּאֲשֶׁ֧ר כִּבְּד֛וּ מִצְרַ֥יִם וּפַרְעֹ֖ה אֶת־לִבָּ֑ם הֲלוֹא֙ כַּאֲשֶׁ֣ר הִתְעַלֵּ֣ל בָּהֶ֔ם וַֽיְשַׁלְּח֖וּם וַיֵּלֵֽכוּ׃',
+	text: '4       וַיֹּאמְר֗וּ מָ֣ה הָאָשָׁם֮ אֲשֶׁ֣ר {} לוֹ֒ וַיֹּאמְר֗וּ מִסְפַּר֙ סַרְנֵ֣י פְלִשְׁתִּ֔ים {} עָפְלֵי זָהָ֔ב וַחֲמִשָּׁ֖ה {} זָהָ֑ב כִּֽי־מַגֵּפָ֥ה אַחַ֛ת לְכֻלָּ֖ם וּלְסַרְנֵיכֶֽם׃ 5       וַעֲשִׂיתֶם֩ צַלְמֵ֨י {} וְצַלְמֵ֣י עַכְבְּרֵיכֶ֗ם {} אֶת־הָאָ֔רֶץ וּנְתַתֶּ֛ם לֵאלֹהֵ֥י יִשְׂרָאֵ֖ל כָּב֑וֹד אוּלַ֗י {} אֶת־יָדוֹ֙ מֵֽעֲלֵיכֶ֔ם וּמֵעַ֥ל אֱלֹהֵיכֶ֖ם וּמֵעַ֥ל אַרְצְכֶֽם׃ 6       וְלָ֤מָּה {} אֶת־לְבַבְכֶ֔ם כַּאֲשֶׁ֧ר {} מִצְרַ֥יִם וּפַרְעֹ֖ה אֶת־לִבָּ֑ם הֲלוֹא֙ כַּאֲשֶׁ֣ר {} בָּהֶ֔ם וַֽיְשַׁלְּח֖וּם וַיֵּלֵֽכוּ׃',
                 blanks: [
                     { id: 'dropZone1', correctAnswer: 'dragItem6' }, // 
                     { id: 'dropZone2', correctAnswer: 'dragItem8' }, // 
                     { id: 'dropZone3', correctAnswer: 'dragItem10' }, // 
                     { id: 'dropZone4', correctAnswer: 'dragItem9' }, // 
-                    { id: 'dropZone5', correctAnswer: 'dragItem7' }  // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem7' },  //
+                    { id: 'dropZone5', correctAnswer: 'dragItem7b' },  // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem7c' },  // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem7d' },  // 
+                    { id: 'dropZone5', correctAnswer: 'dragItem7e' },  // 
+ 
                 ]
             },
   {
@@ -161,17 +169,23 @@ let st=[1,32,70,117];//timing of sound
 
 
         // Array of draggable items
-        const dragItems = [
-	    { id: 'dragItem1', text: 'לָֽקְח֔וּ' },
-            { id: 'dragItem2', text: '' },
-            { id: 'dragItem3', text: '' },
-            { id: 'dragItem4', text: '' },
-            { id: 'dragItem5', text: '' },
-            { id: 'dragItem6', text: '' },
-            { id: 'dragItem7', text: '' },
-            { id: 'dragItem8', text: '' },
-            { id: 'dragItem9', text: '' },
-            { id: 'dragItem10', text: '' },
+        const dragItems = [        
+  	    { id: 'dragItem1', text: 'הוֹדִעֻ֕נוּ' },
+            { id: 'dragItem2', text: 'נְשַׁלְּחֶ֥נּוּ' },
+            { id: 'dragItem3', text: 'מְשַׁלְּחִ֞ים' },
+            { id: 'dragItem4', text: 'תְּשַׁלְּח֤וּ' },
+            { id: 'dragItem5', text: 'הָשֵׁ֥ב תָּשִׁ֛יבוּ' },
+            { id: 'dragItem5b', text: 'וְנוֹדַ֣ע' },
+            { id: 'dragItem5c', text: 'תָס֥וּר' },
+            { id: 'dragItem6', text: 'נָשִׁ֣יב' },
+            { id: 'dragItem7', text: 'הַמַּשְׁחִיתִם֙' },
+            { id: 'dragItem7b', text: 'יָקֵ֤ל' },
+            { id: 'dragItem7c', text: 'תְכַבְּדוּ֙' },
+            { id: 'dragItem7d', text: 'כִּבְּד֛וּ' },
+            { id: 'dragItem7e', text: 'הִתְעַלֵּ֣ל' },
+            { id: 'dragItem8', text: 'וַחֲמִשָּׁ֖ה' },
+            { id: 'dragItem9', text: 'עָפְלֵיכֶם' },
+            { id: 'dragItem10', text: 'עַכְבְּרֵ֣י' },
             { id: 'dragItem11', text: '' },
             { id: 'dragItem12', text: '' },
             { id: 'dragItem13', text: '' },

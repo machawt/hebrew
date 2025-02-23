@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Choice Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; font-size:1.5em}
+        .quiz-container { max-width: 600px; margin: auto; }
+        .question { font-weight: bold; margin-top: 1.5em; }
+        .options {display: flex; flex-direction: column; gap: 1em; margin: 10px 0; }
+        .options button {font-size:1em; padding: 10px; border: none; cursor: pointer; background-color: #007BFF; color: white; border-radius: 5px; width: 80%; }
+        .options button:hover { background-color: #0056b3; }
+        .correct { background-color: #28a745 !important; }
+        .incorrect { background-color: #dc3545 !important; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Multiple Choice Quiz</h2>
+        <div id="quiz"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "וַיאמְּרָ֤וּ בְּנֵָֽי־ ישְּראֵלֹ֙ אֶל־שְּמוּאֵָ֔ל אַל־תַחֲרֵָש ממֶָ֔נוּ מזְּעק אֶל־יְּהוָ֣ה אֱלֹהֵֹ֑ינוּ *וְּישעֵָּנוּ* מיִַד פְּלשְּתָֽים׃",
+                options: ["א. הוּא יוֹשיעַ אתנוּ בֶעתיד", "ב.הוּא הוֹשיעַ אתנוּ", "ג. לְּמַעַן יוֹשיעַ אתנוּ"],
+                answer: "ג. לְּמַעַן יוֹשיעַ אתנוּ"
+            },
+            {
+                question: "וַיכָֽנְּעוֹּ֙ * הַפְּלשְּתים וְּלא־יסְּפָ֣וּ עָ֔וֹד לבָּ֖וֹא בגְּבָ֣וּל ישְּ ראֵֹ֑ל",
+                options: ["א. הֵם הכְּניעוּ", "ב.  הֵם נכְּנְּעוּ", "ג. הֵם יכנְּעוּ", "ד. הֵם כנְּעוּ"],
+                answer: "ב.  הֵם נכְּנְּעוּ"
+            },
+            {
+                question: "וְּהלִַ֗ךְ* מדֵָּי שנהֹ֙ בְּשנה וְּסבַבֹ֙ בֵָית־אֵָ֔ל וְּהַגלְּגָּ֖ל וְּהַ מצְּפֹ֑ה",
+                options: ["יקְּטל – עתיד", "עבר מתְּמַשֵךְ", "וְּקטַל – עבר הֶרְּגֵל", "קטַל – עבר"],
+                answer: "וְּקטַל – עבר הֶרְּגֵל"
+            },
+            {
+                question: "שימוּ עגוּל מסביב לַסֵדֶר מלים לא רגיל: וַיָ֣אמֶר שְּמוּאִֵ֗ל אֶל־ כל־בֵָית ישְּראֵל֮  לֵאמר *אם־בְּכל־לְּבַבְּכִֶ֗ם* אַתֶָם שביםֹ֙ אֶל־יְּהוה ",
+                options: ["פוֹקוּס", "יוֹצֵר הֶקְּשֵר", "יְּחידה חֲדשה"],
+                answer: "פוֹקוּס"
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+                answer: "Pacific Ocean"
+            }
+        ];
+
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionBlock = document.createElement("div");
+                questionBlock.innerHTML = `<p class='question'>${index + 1}. ${q.question}</p>`;
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+                q.options.forEach(option => {
+                    const button = document.createElement("button");
+                    button.innerText = option;
+                    button.onclick = () => selectAnswer(button, index, option);
+                    optionsDiv.appendChild(button);
+                });
+                questionBlock.appendChild(optionsDiv);
+                quizDiv.appendChild(questionBlock);
+            });
+        }
+
+        function selectAnswer(button, questionIndex, answer) {
+            const correctAnswer = questions[questionIndex].answer;
+            if (answer === correctAnswer) {
+                button.classList.add("correct");
+            } else {
+                button.classList.add("incorrect");
+            }
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>

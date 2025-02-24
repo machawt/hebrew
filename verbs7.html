@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sam 4 verbs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+	font-size:1.5em;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px; /* Smaller gap for mobile screens */
+    }
+    .continent-box {
+      width: 100%; /* Full width on mobile */
+      max-width: 200px; /* Limit width on larger screens */
+      height: auto; /* Adjust height to fit content */
+      border: 2px solid #000;
+      padding: 10px;
+      text-align: center;
+      background-color: #f9f9f9;
+      cursor: pointer;
+	font-size:1em;
+
+    }
+    .continent-box.selected {
+      background-color: #d1e7dd;
+    }
+    .country-item {
+      display: inline-block;
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      background-color: #e0e0e0;
+      cursor: pointer;
+	font-size:1.5em;
+    }
+    .country-item.assigned {
+      background-color: #a3cfbb;
+      cursor: default;
+    }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+    .capital {
+      font-size: 0.9em;
+      color: #555;
+    }
+    .country-with-capital {
+      margin: 5px 0;
+    }
+    @media (max-width: 600px) {
+      .continent-box {
+        width: 100%; /* Full width on small screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Match the verb to the binyan</h1>
+  <div class="container" id="continents-container">
+    <!-- Continent boxes will be dynamically generated here -->
+  </div>
+
+  <h2>Verbs S7</h2>
+  <div class="container" id="countries-container">
+    <!-- Country items will be dynamically generated here -->
+  </div>
+
+  <div id="error-message" class="error-message"></div>
+
+  <script>
+    // Data stored in arrays
+    const continents = [
+      { id: 'Paal', name: 'Paal' },
+      { id: 'Piel', name: 'Piel' },
+      { id: 'Hiphil', name: 'Hiphil' },
+      { id: 'Hithpael', name: 'Hithpael' },
+      { id: 'Huphal', name: 'Huphal' },
+      { id: 'Pual', name: 'Pual' },
+      { id: 'Niphal', name: 'Niphal' }
+
+    ];
+
+    const countries = [
+      { name: 'וַֽיַּעֲלוּ֙', continent: 'Hiphil', capital: 'and they brought up' },//	
+      { name: 'קִדְּשׁ֔וּ', continent: 'Piel', capital: 'they consecrated' },//	
+      { name: 'וַיִּנָּה֛וּ', continent: 'Niphal', capital: 'and they mourned nhh' },//	
+      { name: 'שֶׁ֤בֶת', continent: 'Paal', capital: 'to stay yshb' },//	
+      { name: 'הָסִ֜ירוּ', continent: 'Hiphil', capital: 'yous return!' },//	
+      { name: 'וְהָכִ֨ינוּ', continent: 'Hiphil', capital: 'yous make firm' },//	
+      { name: 'קִבְצ֥וּ', continent: 'Paal', capital: 'yous gather!' },//	
+      { name: 'וְאֶתְפַּלֵּ֥ל', continent: 'Hithpael', capital: 'and I will pray' },//	
+      { name: 'וַיִּקָּבְצ֣וּ', continent: 'Paal', capital: 'and they gathered' },//	
+      { name: 'וַיִּֽשְׁאֲבוּ', continent: 'Paal', capital: 'and  they drew' },	
+      { name: 'וַֽיִּשְׁפְּכ֣וּ', continent: 'Paal', capital: 'and they poured' },//	
+      { name: 'וַיָּצ֙וּמוּ֙', continent: 'Paal', capital: 'and they fasted' },//	
+      { name: 'הִתְקַבְּצ֤וּ', continent: 'Hithpael', capital: 'they had gathered' },//	
+      { name: 'תַּחֲרֵ֣שׁ', continent: 'Hiphil', capital: 'you will be silent' },//	
+      { name: 'מִזְּעֹ֖ק', continent: 'Paal', capital: 'from the crying (inf)' },//	
+      { name: 'וְיֹשִׁעֵ֖נוּ', continent: 'Hiphil', capital: 'he will deliver us' },//	
+      { name: 'מַעֲלֶ֣ה', continent: 'Hiphil', capital: 'he was sacrificing' },//	
+      { name: ' נִגְּשׁ֔וּ', continent: 'Niphal', capital: 'they drew near' },//	
+      { name: 'וַיַּרְעֵ֣ם', continent: 'Hiphil', capital: 'and he thundered' },//	
+      { name: 'וַיְהֻמֵּ֔ם', continent: 'Paal', capital: 'Pual and he was thrown into confusion hmm' },//
+      { name: '', continent: '', capital: '' },//	
+	      { name: '', continent: '', capital: '' },//	
+      { name: 'וַיַּכּ֕וּם', continent: 'Hiphil', capital: 'they struck down them nch' },//	
+      { name: ' וַיִּכָּֽנְעוּ֙', continent: 'Niphal', capital: 'and they were subdued' },//	
+      { name: 'לָֽקְחוּ', continent: 'Paal', capital: 'they took' },//	
+      { name: 'וַיִּֽבֶן', continent: 'Paal', capital: 'and he built bnh' }//	    
+];
+
+    // Get container elements
+    const continentsContainer = document.getElementById('continents-container');
+    const countriesContainer = document.getElementById('countries-container');
+    const errorMessage = document.getElementById('error-message');
+
+    let selectedContinent = null;
+
+    // Function to generate continent boxes
+    function generateContinents() {
+      continents.forEach(continent => {
+        const continentBox = document.createElement('div');
+        continentBox.className = 'continent-box';
+        continentBox.id = continent.id;
+        continentBox.innerHTML = `<h3>${continent.name}</h3>`;
+
+        // Add both click and touch event listeners
+        continentBox.addEventListener('click', handleContinentClick);
+        continentBox.addEventListener('touchstart', handleContinentClick);
+
+        continentsContainer.appendChild(continentBox);
+      });
+    }
+
+    // Function to generate country items
+    function generateCountries() {
+      countries.forEach(country => {
+        const countryItem = document.createElement('div');
+        countryItem.className = 'country-item';
+        countryItem.textContent = country.name;
+        countryItem.setAttribute('data-continent', country.continent);
+        countryItem.setAttribute('data-capital', country.capital);
+
+        // Add both click and touch event listeners
+        countryItem.addEventListener('click', handleCountryClick);
+        countryItem.addEventListener('touchstart', handleCountryClick);
+
+        countriesContainer.appendChild(countryItem);
+      });
+    }
+
+    // Handle continent selection
+    function handleContinentClick(event) {
+      event.preventDefault(); // Prevent default touch behavior
+      // Deselect all continents
+      document.querySelectorAll('.continent-box').forEach(box => box.classList.remove('selected'));
+      // Select the clicked continent
+      this.classList.add('selected');
+      selectedContinent = this.id;
+      errorMessage.textContent = ''; // Clear error message when a new continent is selected
+    }
+
+    // Handle country assignment
+    function handleCountryClick(event) {
+      event.preventDefault(); // Prevent default touch behavior
+      if (selectedContinent) {
+        if (this.getAttribute('data-continent') === selectedContinent) {
+          // Move the country to the selected continent box
+          const continentBox = document.getElementById(selectedContinent);
+          const countryWithCapital = document.createElement('div');
+          countryWithCapital.className = 'country-with-capital';
+          countryWithCapital.textContent = `${this.textContent}`;
+          const capitalText = document.createElement('div');
+          capitalText.className = 'capital';
+          capitalText.textContent = `C: ${this.getAttribute('data-capital')}`;
+          countryWithCapital.appendChild(capitalText);
+          continentBox.appendChild(countryWithCapital);
+          this.classList.add('assigned');
+          errorMessage.textContent = ''; // Clear error message on correct assignment
+        } else {
+          errorMessage.textContent = `Error: ${this.textContent} does not belong to this binyan.`;
+        }
+      } else {
+        errorMessage.textContent = 'Please select a binyan first.';
+      }
+    }
+
+    // Generate the quiz
+    generateContinents();
+    generateCountries();
+  </script>
+</body>
+</html>

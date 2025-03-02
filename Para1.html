@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This Week's Parasha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #parasha {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #hebrew-text {
+            font-family: 'SBL Hebrew', 'Taamey Frank CLM', 'Times New Roman', serif;
+            font-size: 20px;
+            direction: rtl;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        #english-text {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        #read-aloud, #stop-reading {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #stop-reading {
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <h1>This Week's Parasha</h1>
+    <div id="parasha">Loading Parasha...</div>
+    <div id="hebrew-text"></div>
+    <div id="english-text"></div>
+    <button id="read-aloud" disabled>Read Aloud (English)</button>
+    <button id="stop-reading" disabled>Stop Reading</button>
+
+    <script>
+        // Function to fetch this week's Parasha
+        async function fetchParasha() {
+            const hebcalApiUrl = "https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&m=50";
+
+            try {
+                // Fetch Parasha data from Hebcal
+                const response = await fetch(hebcalApiUrl);
+                const data = await response.json();
+
+                // Find the Parasha in the response
+                const parashaItem = data.items.find(item => item.category === "parashat");
+                if (parashaItem) {
+                    const parashaName = parashaItem.hebrew;
+                    const parashaRef = parashaItem.title; // English name for Sefaria API
+
+                    // Display the Parasha name
+                    document.getElementById("parasha").textContent = parashaName;
+
+                    // Fetch and display the Hebrew and English text from Sefaria
+                    const { hebrewText, englishText } = await fetchParashaText(parashaRef);
+                    document.getElementById("hebrew-text").textContent = hebrewText || "Hebrew text not available.";
+                    document.getElementById("english-text").textContent = englishText || "English text not available.";
+
+                    // Enable the "Read Aloud" button
+                    document.getElementById("read-aloud").disabled = false;
+                } else {
+                    document.getElementById("parasha").textContent = "No Parasha found for this week.";
+                }
+            } catch (error) {
+                console.error("Error fetching Parasha:", error);
+                document.getElementById("parasha").textContent = "Failed to load Parasha.";
+            }
+        }
+
+        // Function to fetch Hebrew and English text for the Parasha from Sefaria API
+        async function fetchParashaText(parashaRef) {
+            const sefariaApiUrl = `https://www.sefaria.org/api/texts/${parashaRef}`;
+
+            try {
+                const response = await fetch(sefariaApiUrl);
+                const data = await response.json();
+
+                // Extract and format the Hebrew and English text
+                const hebrewText = data.he && Array.isArray(data.he) ? data.he.join("\n") : null;
+                const englishText = data.text && Array.isArray(data.text) ? data.text.join("\n") : null;
+
+                return { hebrewText, englishText };
+            } catch (error) {
+                console.error("Error fetching Parasha text:", error);
+            }
+            return { hebrewText: null, englishText: null };
+        }
+
+        // Function to read the English text aloud
+        function readAloud() {
+            const englishText = document.getElementById("english-text").textContent;
+            if (englishText && window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(englishText);
+                utterance.lang = "en-US"; // Set language to English
+                utterance.rate = 0.9; // Adjust speech rate (0.1 to 10)
+
+                // Show the "Stop Reading" button and hide the "Read Aloud" button
+                document.getElementById("read-aloud").style.display = "none";
+                document.getElementById("stop-reading").style.display = "inline-block";
+                document.getElementById("stop-reading").disabled = false;
+
+                // Stop any ongoing speech before starting new speech
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+
+                // Re-enable the "Read Aloud" button when speech ends
+                utterance.onend = () => {
+                    document.getElementById("read-aloud").style.display = "inline-block";
+                    document.getElementById("stop-reading").style.display = "none";
+                };
+            } else {
+                alert("Text-to-speech is not supported in your browser.");
+            }
+        }
+
+        // Function to stop reading
+        function stopReading() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                document.getElementById("read-aloud").style.display = "inline-block";
+                document.getElementById("stop-reading").style.display = "none";
+            }
+        }
+
+        // Add event listeners to the buttons
+        document.getElementById("read-aloud").addEventListener("click", readAloud);
+        document.getElementById("stop-reading").addEventListener("click", stopReading);
+
+        // Fetch and display the Parasha on page load
+        fetchParasha();
+    </script>
+</body>
+</html>

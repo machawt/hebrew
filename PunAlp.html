@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punjabi Alphabet Order Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question h3 {
+            margin-bottom: 10px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+        }
+        .options label {
+            margin-bottom: 10px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .feedback {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        .word-meaning {
+            font-style: italic;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Punjabi Alphabet Order Quiz</h1>
+    <div id="quiz"></div>
+    <div class="feedback" id="feedback"></div>
+    <button type="button" class="submit-btn hidden" id="next-btn" onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+    // Array of all Punjabi letters with key words and their English translations
+    const punjabiLetters = [
+        { letter: "ੳ", word: "ਊਠ", meaning: "Camel" },
+        { letter: "ਅ", word: "ਅਨਾਰ", meaning: "Pomegranate" },
+        { letter: "ੲ", word: "ਇੱਟ", meaning: "Brick" },
+        { letter: "ਸ", word: "ਸਬਜ਼ੀ", meaning: "Vegetable" },
+        { letter: "ਹ", word: "ਹਾਥੀ", meaning: "Elephant" },
+        { letter: "ਕ", word: "ਕਬੂਤਰ", meaning: "Pigeon" },
+        { letter: "ਖ", word: "ਖੰਡ", meaning: "Sugar" },
+        { letter: "ਗ", word: "ਗੁਲਾਬ", meaning: "Rose" },
+        { letter: "ਘ", word: "ਘਰ", meaning: "House" },
+        { letter: "ਙ", word: "ਙ" }, // No common word for ਙ
+        { letter: "ਚ", word: "ਚਾਵਲ", meaning: "Rice" },
+        { letter: "ਛ", word: "ਛੱਤ", meaning: "Roof" },
+        { letter: "ਜ", word: "ਜਹਾਜ਼", meaning: "Ship" },
+        { letter: "ਝ", word: "ਝੰਡਾ", meaning: "Flag" },
+        { letter: "ਞ", word: "ਞ" }, // No common word for ਞ
+        { letter: "ਟ", word: "ਟਮਾਟਰ", meaning: "Tomato" },
+        { letter: "ਠ", word: "ਠੰਡਾ", meaning: "Cold" },
+        { letter: "ਡ", word: "ਡੱਡੂ", meaning: "Frog" },
+        { letter: "ਢ", word: "ਢੋਲ", meaning: "Drum" },
+        { letter: "ਣ", word: "ਣ" }, // No common word for ਣ
+        { letter: "ਤ", word: "ਤਾਰਾ", meaning: "Star" },
+        { letter: "ਥ", word: "ਥਾਲੀ", meaning: "Plate" },
+        { letter: "ਦ", word: "ਦਰਖ਼ਤ", meaning: "Tree" },
+        { letter: "ਧ", word: "ਧਰਤੀ", meaning: "Earth" },
+        { letter: "ਨ", word: "ਨਦੀ", meaning: "River" },
+        { letter: "ਪ", word: "ਪੰਖਾ", meaning: "Fan" },
+        { letter: "ਫ", word: "ਫੁੱਲ", meaning: "Flower" },
+        { letter: "ਬ", word: "ਬੱਦਲ", meaning: "Cloud" },
+        { letter: "ਭ", word: "ਭਾਲੂ", meaning: "Bear" },
+        { letter: "ਮ", word: "ਮੱਛੀ", meaning: "Fish" },
+        { letter: "ਯ", word: "ਯਾਤਰਾ", meaning: "Journey" },
+        { letter: "ਰ", word: "ਰੋਟੀ", meaning: "Bread" },
+        { letter: "ਲ", word: "ਲੂੰਬੜੀ", meaning: "Fox" },
+        { letter: "ਵ", word: "ਵੱਛਾ", meaning: "Calf" },
+        { letter: "ੜ", word: "ੜ" }, // No common word for ੜ
+        { letter: "ਸ਼", word: "ਸ਼ੇਰ", meaning: "Lion" },
+        { letter: "ਖ਼", word: "ਖ਼ਤ", meaning: "Letter" },
+        { letter: "ਗ਼", word: "ਗ਼ਜ਼ਲ", meaning: "Ghazal" },
+        { letter: "ਜ਼", word: "ਜ਼ਮੀਨ", meaning: "Land" },
+        { letter: "ਫ਼", word: "ਫ਼ਰਸ਼", meaning: "Floor" },
+        { letter: "ਲ਼", word: "ਲ਼" }, // No common word for ਲ਼
+        { letter: "ਕ਼", word: "ਕ਼ਲਮ", meaning: "Pen" },
+        { letter: "ਝ਼", word: "ਝ਼" }, // No common word for ਝ਼
+        { letter: "ਡ਼", word: "ਡ਼" }, // No common word for ਡ਼
+        { letter: "ਢ਼", word: "ਢ਼" }, // No common word for ਢ਼
+        { letter: "ਵ਼", word: "ਵ਼" }  // No common word for ਵ਼
+    ];
+
+    // Array of questions
+    const questions = [];
+    for (let i = 0; i < punjabiLetters.length - 1; i++) {
+        questions.push({
+            letter: punjabiLetters[i].letter,
+            word: punjabiLetters[i].word,
+            meaning: punjabiLetters[i].meaning,
+            question: `What letter comes after '${punjabiLetters[i].letter}' (${punjabiLetters[i].word} - ${punjabiLetters[i].meaning}) in the Punjabi alphabet?`,
+            options: [
+                punjabiLetters[i + 1].letter, // Correct answer
+                punjabiLetters[Math.floor(Math.random() * punjabiLetters.length)].letter, // Random incorrect answer
+                punjabiLetters[Math.floor(Math.random() * punjabiLetters.length)].letter, // Random incorrect answer
+                punjabiLetters[Math.floor(Math.random() * punjabiLetters.length)].letter  // Random incorrect answer
+            ],
+            correctAnswer: punjabiLetters[i + 1].letter
+        });
+    }
+
+    let currentQuestionIndex = 0;
+    const quizDiv = document.getElementById("quiz");
+    const feedbackDiv = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+
+    // Function to display the current question
+    function displayQuestion() {
+        const q = questions[currentQuestionIndex];
+        quizDiv.innerHTML = `
+            <div class="question">
+                <h3>${q.question}</h3>
+                <div class="word-meaning">Word: ${q.word} (${q.meaning})</div>
+                <div class="options">
+                    ${q.options.map(option => `
+                        <label>
+                            <input type="radio" name="currentQuestion" value="${option}"> ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+        feedbackDiv.textContent = "";
+        nextBtn.classList.add("hidden");
+    }
+
+    // Function to check the answer
+    function checkAnswer() {
+        const selectedOption = document.querySelector('input[name="currentQuestion"]:checked');
+        if (!selectedOption) {
+            feedbackDiv.textContent = "Please select an answer!";
+            return;
+        }
+
+        const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+        if (selectedOption.value === correctAnswer) {
+            feedbackDiv.textContent = "Correct!";
+            nextBtn.classList.remove("hidden");
+        } else {
+            feedbackDiv.textContent = "Incorrect. Try again!";
+        }
+    }
+
+    // Function to move to the next question
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            displayQuestion();
+        } else {
+            quizDiv.innerHTML = "<h3>Quiz completed! Well done!</h3>";
+            feedbackDiv.textContent = "";
+            nextBtn.classList.add("hidden");
+        }
+    }
+
+    // Event listener for radio buttons
+    quizDiv.addEventListener("change", checkAnswer);
+
+    // Display the first question when the page loads
+    displayQuestion();
+</script>
+
+</body>
+</html>
